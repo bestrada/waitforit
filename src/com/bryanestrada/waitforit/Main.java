@@ -1,26 +1,34 @@
 package com.bryanestrada.waitforit;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 
 import android.app.ListActivity;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bryanestrada.waitforit.data.DataAccessor;
 import com.nextbus.webservices.NextBus;
 import com.nextbus.webservices.Prediction;
+import com.nextbus.webservices.PredictionResultHandler;
+import com.nextbus.webservices.PredictionTask;
 
 /**
  * @author <a href="mailto:bryan@bryanestrada.com">Bryan Estrada</a>
  */
-public class Main extends ListActivity
+public class Main extends ListActivity implements PredictionResultHandler
 {
    private static final String TAG = "Main";
 
@@ -36,12 +44,17 @@ public class Main extends ListActivity
    private int _listState;
    
    private TextView _prediction;
+   private ProgressBar _throbbler;
    
    private DataAccessor _db;
    private Cursor _cursor;
    private NextBus _nb;
    
-   /** Called when the activity is first created. */
+   private Handler _guiThread;
+   private ExecutorService _predictionThread;
+   private Runnable _updateTask;
+   private Future _predictionPending;
+   
    @Override
    public void onCreate(Bundle savedInstanceState)
    {
@@ -63,6 +76,7 @@ public class Main extends ListActivity
 
       super.onCreate(savedInstanceState);
       this.setContentView(R.layout.main);
+      initializeThreading();
 
       _textViews[ROUTE] = (TextView) findViewById(R.id.route_selection);
       _textViews[DIRECTION] = (TextView) findViewById(R.id.direction_selection);
@@ -75,6 +89,7 @@ public class Main extends ListActivity
          public void onClick(View view)
          {
             _prediction.setVisibility(View.GONE);
+            _throbbler.setVisibility(View.GONE);
             switch (view.getId())
             {
             case R.id.route_selection:
@@ -110,12 +125,56 @@ public class Main extends ListActivity
 
       _selectionList = (ListView) findViewById(android.R.id.list);
       _prediction = (TextView) findViewById(R.id.prediction);
+      _throbbler = (ProgressBar) findViewById(R.id.throbbler);
+      
       _cursor = _db.getAllRoutes();
       this.startManagingCursor(_cursor);
       this.setListAdapter(new TransitListAdapter(this, _cursor));
       _listState = ROUTE;
    }
-
+   
+   /**
+    * initialize the second thread. therea are two: 1) for the main thread that 
+    * is running this program and 2) for the web request thing that is used to 
+    * invoke the nextbus webservice in the background.
+    */
+   private void initializeThreading()
+   {
+      _guiThread = new Handler();
+      _predictionThread = Executors.newSingleThreadExecutor();
+      
+      _updateTask = new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            String routeTag = _selectedTags[ROUTE];
+            String stopTag = _selectedTags[STOP];
+            
+            // cancel the previous prediction if there was one
+            if (null != _predictionPending)
+               _predictionPending.cancel(true);
+            
+            // let the user know we're doing something
+            _prediction.setText(R.string.app_name);
+            
+            // begin prediction, but don't wait for it
+            try
+            {
+               PredictionTask predict = new PredictionTask(Main.this, routeTag, stopTag);
+               _predictionPending = _predictionThread.submit(predict);
+            }
+            catch (RejectedExecutionException e)
+            {
+               Log.e(TAG, e.getMessage(), e);
+               _throbbler.setVisibility(View.GONE);
+               _prediction.setText(R.string.prediction_error);
+            }
+         }
+         
+      };
+   }
+   
    /**
     * Safely swap out the cursor that is backing this page's list by closing the
     * current one and replacing it with the given one
@@ -161,8 +220,9 @@ public class Main extends ListActivity
             _listState = -1;
             String routeTag =  _selectedTags[ROUTE];
             String stopTag  = _selectedTags[STOP];
-            showPrediction(routeTag, stopTag);
+            showPrediction();
             _prediction.setVisibility(View.VISIBLE);
+            _throbbler.setVisibility(View.VISIBLE);
             break;
          }
       }
@@ -176,14 +236,59 @@ public class Main extends ListActivity
        return true;
    }
    
-   private void showPrediction(String routeTag, String stopTag)
+   private void showPrediction()
+   {
+      // first replace the text to indicate wait for it, then spin off a thread 
+      // that will change it when it's finally done.
+      _prediction.setText(R.string.app_name);
+      
+      // now queue an update for the prediction text
+      _guiThread.removeCallbacks(_updateTask);
+      _guiThread.postDelayed(_updateTask, 200);
+   }
+
+   @Override
+   public void setPredictionResult(Iterable<Prediction> result)
    {
       StringBuilder b = new StringBuilder();
-      for (Prediction p : _nb.getPrediction(routeTag, stopTag))
+      for (Prediction p : result)
       {
          b.append(p.toString());
          b.append('\n');
       }
-      _prediction.setText(b.toString());
+      String predict = b.toString();
+      guiSetVisibility(_throbbler, View.GONE);
+      if (predict.length() > 0)
+      {
+         guiSetText(_prediction, predict);
+      }
+      else
+      {
+         guiSetText(_prediction, getString(R.string.prediction_error));
+      }
+   }
+   
+   private void guiSetVisibility(final View view, final int visibility)
+   {
+      _guiThread.post(new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            view.setVisibility(visibility);
+         }
+      });
+   }
+   
+   private void guiSetText(final TextView view, final String text)
+   {
+      _guiThread.post(new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            view.setText(text);
+         }
+      });
    }
 }

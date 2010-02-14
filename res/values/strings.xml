@@ -6,4 +6,5 @@
     <string name="about">About</string>
     <string name="prefs">Preferences</string>
     <string name="exit">Exit</string>
+    <string name="prediction_error">Error retrieving prediction.</string>
 </resources>
