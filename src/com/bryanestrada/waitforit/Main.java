@@ -44,11 +44,10 @@ public class Main extends ListActivity implements PredictionResultHandler
    private int _listState;
    
    private TextView _prediction;
-   private ProgressBar _throbbler;
+   private View _throbbler;
    
    private DataAccessor _db;
    private Cursor _cursor;
-   private NextBus _nb;
    
    private Handler _guiThread;
    private ExecutorService _predictionThread;
@@ -59,11 +58,11 @@ public class Main extends ListActivity implements PredictionResultHandler
    public void onCreate(Bundle savedInstanceState)
    {
       _db = new DataAccessor(this);
-      _nb = new NextBus();
       try
       {
          _db.createDatabase();
-      } catch (IOException e)
+      }
+      catch (IOException e)
       {
          Log.e(TAG, "couldn't initialize database", e);
          if (null != _db)
@@ -125,7 +124,7 @@ public class Main extends ListActivity implements PredictionResultHandler
 
       _selectionList = (ListView) findViewById(android.R.id.list);
       _prediction = (TextView) findViewById(R.id.prediction);
-      _throbbler = (ProgressBar) findViewById(R.id.throbbler);
+      _throbbler = findViewById(R.id.throbbler);
       
       _cursor = _db.getAllRoutes();
       this.startManagingCursor(_cursor);
@@ -156,7 +155,8 @@ public class Main extends ListActivity implements PredictionResultHandler
                _predictionPending.cancel(true);
             
             // let the user know we're doing something
-            _prediction.setText(R.string.app_name);
+            _throbbler.setVisibility(View.VISIBLE);
+            _prediction.setVisibility(View.GONE);
             
             // begin prediction, but don't wait for it
             try
@@ -221,8 +221,6 @@ public class Main extends ListActivity implements PredictionResultHandler
             String routeTag =  _selectedTags[ROUTE];
             String stopTag  = _selectedTags[STOP];
             showPrediction();
-            _prediction.setVisibility(View.VISIBLE);
-            _throbbler.setVisibility(View.VISIBLE);
             break;
          }
       }
@@ -240,7 +238,7 @@ public class Main extends ListActivity implements PredictionResultHandler
    {
       // first replace the text to indicate wait for it, then spin off a thread 
       // that will change it when it's finally done.
-      _prediction.setText(R.string.app_name);
+      _throbbler.setVisibility(View.VISIBLE);
       
       // now queue an update for the prediction text
       _guiThread.removeCallbacks(_updateTask);
@@ -266,6 +264,7 @@ public class Main extends ListActivity implements PredictionResultHandler
       {
          guiSetText(_prediction, getString(R.string.prediction_error));
       }
+      guiSetVisibility(_prediction, View.VISIBLE);
    }
    
    private void guiSetVisibility(final View view, final int visibility)
