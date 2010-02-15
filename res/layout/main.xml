@@ -10,19 +10,19 @@
       the user makes a selection
       -->
     <TextView android:id="@+id/route_selection"
-    	style="@style/Text"
+    	style="@style/TitleText"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" 
         android:paddingLeft="2pt"
         android:visibility="gone" />    
     <TextView android:id="@+id/direction_selection"
-    	style="@style/Text"  
+    	style="@style/TitleText"  
         android:layout_width="fill_parent" 
         android:layout_height="fill_parent" 
         android:paddingLeft="4pt"
         android:visibility="gone" />    
     <TextView android:id="@+id/stop_selection"
-    	style="@style/Text"  
+    	style="@style/TitleText"  
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"  
         android:paddingLeft="6pt"

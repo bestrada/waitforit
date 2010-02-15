@@ -105,14 +105,23 @@ public class Main extends ListActivity implements PredictionResultHandler
    
    private void onClickText(View view)
    {
+      if (null != _predictionPending)
+         _predictionPending.cancel(true);
+      
       _throbbler.setVisibility(View.GONE);
       _result.setVisibility(View.GONE);
+      Animation pullLeft = AnimationUtils.loadAnimation(this, R.anim.pull_left);
+      Animation appear = AnimationUtils.loadAnimation(this, R.anim.appear);
       switch (view.getId())
       {
       case R.id.route_selection:
          _listState = ROUTE;
          _selectedIds[STOP] = _selectedIds[DIRECTION] = _selectedIds[ROUTE] = -1;
          _selectedTags[STOP] = _selectedTags[DIRECTION] = _selectedTags[ROUTE] = null;
+         
+         _textViews[ROUTE].startAnimation(pullLeft);
+         _textViews[DIRECTION].startAnimation(pullLeft);
+         _textViews[STOP].startAnimation(pullLeft);
          _textViews[ROUTE].setVisibility(View.GONE);
          _textViews[DIRECTION].setVisibility(View.GONE);
          _textViews[STOP].setVisibility(View.GONE);
@@ -122,6 +131,9 @@ public class Main extends ListActivity implements PredictionResultHandler
          _listState = DIRECTION;
          _selectedIds[STOP] = _selectedIds[DIRECTION] = -1;
          _selectedTags[STOP] = _selectedTags[DIRECTION] = null;
+         
+         _textViews[DIRECTION].startAnimation(pullLeft);
+         _textViews[STOP].startAnimation(pullLeft);
          _textViews[DIRECTION].setVisibility(View.GONE);
          _textViews[STOP].setVisibility(View.GONE);
          swapListCursor(_db.getDirections(_selectedIds[ROUTE]));
@@ -130,11 +142,14 @@ public class Main extends ListActivity implements PredictionResultHandler
          _listState = STOP;
          _selectedIds[STOP] = -1;
          _selectedTags[STOP] = null;
+         
+         _textViews[STOP].startAnimation(pullLeft);
          _textViews[STOP].setVisibility(View.GONE);
          swapListCursor(_db.getStops(_selectedIds[DIRECTION]));
          break;
       }
       _selectionList.setVisibility(View.VISIBLE);
+      _selectionList.startAnimation(appear);
    }
    
    private void setListeners()

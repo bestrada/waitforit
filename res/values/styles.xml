@@ -11,6 +11,10 @@
 		<item name="android:paddingLeft">8pt</item>
 	</style>
 	
+	<style name="TitleText" parent="Text">
+		<item name="android:textColor">#004A7F</item>
+	</style>
+	
 	<style name="ResultText" parent="Text">
 		<item name="android:textColor">#FFFFFF</item>
 		<item name="android:textSize">8pt</item>
