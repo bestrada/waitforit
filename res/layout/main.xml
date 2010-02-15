@@ -9,25 +9,31 @@
       made so far. set the visibility to gone for now, they will appear when 
       the user makes a selection
       -->
-    <TextView android:id="@+id/route_selection"
-    	style="@style/TitleText"
+    <Button android:id="@+id/route_selection"
+    	style="@style/TitleButton"
+    	android:focusable="true"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" 
-        android:paddingLeft="2pt"
         android:visibility="gone" />    
-    <TextView android:id="@+id/direction_selection"
-    	style="@style/TitleText"  
+    <Button android:id="@+id/direction_selection"
+    	style="@style/TitleButton"  
+    	android:focusable="true"
         android:layout_width="fill_parent" 
         android:layout_height="fill_parent" 
-        android:paddingLeft="4pt"
         android:visibility="gone" />    
-    <TextView android:id="@+id/stop_selection"
-    	style="@style/TitleText"  
+    <Button android:id="@+id/stop_selection"
+    	style="@style/TitleButton"  
+    	android:focusable="true"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"  
-        android:paddingLeft="6pt"
-        android:visibility="gone" />    
-    
+        android:visibility="gone" />
+        
+    <View android:id="@+id/divider"
+	    android:background="@drawable/gradient_divider"
+	    android:layout_width="fill_parent"
+	    android:layout_height="1dp"
+	    android:layout_below="@id/stop_selection" />
+	    
     <!-- a list used to store the current selection options -->
     <ListView android:id="@+id/android:list"
         android:layout_width="fill_parent"
@@ -57,7 +63,7 @@
 		    	android:layout_height="fill_parent"
 		    	android:paddingTop="4pt"
 		    	android:layout_gravity="center"
-		    	android:text="@string/app_name" />
+		    	android:text="@string/wait_for_it" />
 		</TableRow>
 	</TableLayout>
 
@@ -69,11 +75,12 @@
 		android:gravity="center"
 		android:stretchColumns="0"
 		android:visibility="gone">
-		<TableRow>
+		<TableRow android:layout_height="fill_parent">
 			<TextView android:id="@+id/prediction"
 				style="@style/ResultText"
 		        android:layout_width="fill_parent" 
 		        android:layout_height="fill_parent"
+		        android:gravity="center"
 		        android:layout_gravity="center" />
 		</TableRow>
 	</TableLayout>

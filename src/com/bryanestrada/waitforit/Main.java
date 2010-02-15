@@ -7,6 +7,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,10 +15,12 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,7 +37,7 @@ public class Main extends ListActivity implements PredictionResultHandler
 {
    private static final String TAG = "Main";
 
-   private final TextView[] _textViews = new TextView[3];
+   private final Button[] _selectedStack = new Button[3];
    private final long[] _selectedIds = new long[3];
    private final String[] _selectedTags = new String[3];
    
@@ -92,9 +95,9 @@ public class Main extends ListActivity implements PredictionResultHandler
    
    private void findViews()
    {
-      _textViews[ROUTE] = (TextView) findViewById(R.id.route_selection);
-      _textViews[DIRECTION] = (TextView) findViewById(R.id.direction_selection);
-      _textViews[STOP] = (TextView) findViewById(R.id.stop_selection);
+      _selectedStack[ROUTE] = (Button) findViewById(R.id.route_selection);
+      _selectedStack[DIRECTION] = (Button) findViewById(R.id.direction_selection);
+      _selectedStack[STOP] = (Button) findViewById(R.id.stop_selection);
       _selectedIds[STOP] = _selectedIds[DIRECTION] = _selectedIds[ROUTE] = -1;
       
       _selectionList = (ListView) findViewById(android.R.id.list);
@@ -103,7 +106,7 @@ public class Main extends ListActivity implements PredictionResultHandler
       _result = findViewById(R.id.result);
    }
    
-   private void onClickText(View view)
+   private void onClickStack(View view)
    {
       if (null != _predictionPending)
          _predictionPending.cancel(true);
@@ -119,12 +122,12 @@ public class Main extends ListActivity implements PredictionResultHandler
          _selectedIds[STOP] = _selectedIds[DIRECTION] = _selectedIds[ROUTE] = -1;
          _selectedTags[STOP] = _selectedTags[DIRECTION] = _selectedTags[ROUTE] = null;
          
-         _textViews[ROUTE].startAnimation(pullLeft);
-         _textViews[DIRECTION].startAnimation(pullLeft);
-         _textViews[STOP].startAnimation(pullLeft);
-         _textViews[ROUTE].setVisibility(View.GONE);
-         _textViews[DIRECTION].setVisibility(View.GONE);
-         _textViews[STOP].setVisibility(View.GONE);
+         _selectedStack[ROUTE].startAnimation(pullLeft);
+         _selectedStack[DIRECTION].startAnimation(pullLeft);
+         _selectedStack[STOP].startAnimation(pullLeft);
+         _selectedStack[ROUTE].setVisibility(View.GONE);
+         _selectedStack[DIRECTION].setVisibility(View.GONE);
+         _selectedStack[STOP].setVisibility(View.GONE);
          swapListCursor(_db.getAllRoutes());
          break;
       case R.id.direction_selection:
@@ -132,10 +135,10 @@ public class Main extends ListActivity implements PredictionResultHandler
          _selectedIds[STOP] = _selectedIds[DIRECTION] = -1;
          _selectedTags[STOP] = _selectedTags[DIRECTION] = null;
          
-         _textViews[DIRECTION].startAnimation(pullLeft);
-         _textViews[STOP].startAnimation(pullLeft);
-         _textViews[DIRECTION].setVisibility(View.GONE);
-         _textViews[STOP].setVisibility(View.GONE);
+         _selectedStack[DIRECTION].startAnimation(pullLeft);
+         _selectedStack[STOP].startAnimation(pullLeft);
+         _selectedStack[DIRECTION].setVisibility(View.GONE);
+         _selectedStack[STOP].setVisibility(View.GONE);
          swapListCursor(_db.getDirections(_selectedIds[ROUTE]));
          break;
       case R.id.stop_selection:
@@ -143,8 +146,8 @@ public class Main extends ListActivity implements PredictionResultHandler
          _selectedIds[STOP] = -1;
          _selectedTags[STOP] = null;
          
-         _textViews[STOP].startAnimation(pullLeft);
-         _textViews[STOP].setVisibility(View.GONE);
+         _selectedStack[STOP].startAnimation(pullLeft);
+         _selectedStack[STOP].setVisibility(View.GONE);
          swapListCursor(_db.getStops(_selectedIds[DIRECTION]));
          break;
       }
@@ -154,16 +157,16 @@ public class Main extends ListActivity implements PredictionResultHandler
    
    private void setListeners()
    {
-      OnClickListener textViewListener = new OnClickListener()
+      OnClickListener stackViewListener = new OnClickListener()
       {
          @Override
          public void onClick(View view)
          {
-            Main.this.onClickText(view);
+            Main.this.onClickStack(view);
          }
       };
-      for (int i = 0; i < _textViews.length; i++)
-         _textViews[i].setOnClickListener(textViewListener);
+      for (int i = 0; i < _selectedStack.length; i++)
+         _selectedStack[i].setOnClickListener(stackViewListener);
    }
    
    /**
@@ -234,12 +237,12 @@ public class Main extends ListActivity implements PredictionResultHandler
       {
          TextView selected = (TextView) v.findViewById(R.id.name);
 
-         _textViews[_listState].setText(selected.getText());
-         _textViews[_listState].setVisibility(View.VISIBLE);
+         _selectedStack[_listState].setText(selected.getText());
+         _selectedStack[_listState].setVisibility(View.VISIBLE);
          
          Animation push = AnimationUtils.loadAnimation(this, R.anim.push_right);
          Animation appear = AnimationUtils.loadAnimation(this, R.anim.appear);
-         _textViews[_listState].startAnimation(push);
+         _selectedStack[_listState].startAnimation(push);
          switch (_listState)
          {
          case ROUTE:
@@ -271,6 +274,22 @@ public class Main extends ListActivity implements PredictionResultHandler
        MenuInflater inflater = getMenuInflater();
        inflater.inflate(R.menu.menu, menu);
        return true;
+   }
+   
+   @Override
+   public boolean onOptionsItemSelected(MenuItem item)
+   {
+      boolean result = false;
+      
+      switch (item.getItemId())
+      {
+      case R.id.about:
+         startActivity(new Intent(this, About.class));
+         result = true;
+         break;
+      }
+      
+      return result;
    }
    
    private void showPrediction()
@@ -340,7 +359,7 @@ public class Main extends ListActivity implements PredictionResultHandler
       {
          if (_listState >= DIRECTION)
          {
-            this.onClickText(_textViews[_listState-1]);
+            this.onClickStack(_selectedStack[_listState-1]);
             result = true;
          }
       }

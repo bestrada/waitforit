@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	
+	<style name="SuitUp" parent="android:Theme.Light.NoTitleBar">
+		
+	</style>
+	
 	<style name="Text">
 		<item name="android:textSize">10pt</item>
 		<item name="android:gravity">center_vertical|left</item>
@@ -11,17 +15,23 @@
 		<item name="android:paddingLeft">8pt</item>
 	</style>
 	
-	<style name="TitleText" parent="Text">
-		<item name="android:textColor">#004A7F</item>
+	<style name="TitleButton" parent="@android:style/Widget.Button">
+		<item name="android:textColor">#EEEEEE</item>
+		<item name="android:gravity">center_vertical|right</item>
+		<item name="android:textSize">10pt</item>
+		<item name="android:padding">6pt</item>
+		<item name="android:background">@drawable/red_rectangle</item>
+		<item name="android:focusable">true</item>
+		<item name="android:clickable">true</item>
 	</style>
 	
 	<style name="ResultText" parent="Text">
-		<item name="android:textColor">#FFFFFF</item>
+		<item name="android:textColor">#222222</item>
 		<item name="android:textSize">8pt</item>
 		<item name="android:paddingTop">12pt</item>
 	</style>
 	
 	<style name="ResultTextError" parent="ResultText">
-		<item name="android:textColor">#FF2222</item>
+		<item name="android:textColor">#BB1111</item>
 	</style>
 </resources>

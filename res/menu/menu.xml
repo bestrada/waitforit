@@ -1,14 +1,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 	<item android:id="@+id/help"
 		android:title="Help"
+		android:enabled="false"
 		android:icon="@drawable/android:ic_menu_help" />	
 	<item android:id="@+id/about"
 		android:title="About"
 		android:icon="@drawable/android:ic_menu_info_details" />
 	<item android:id="@+id/preferences"
 		android:title="Preferences"
+		android:enabled="false"
 		android:icon="@drawable/android:ic_menu_preferences" />
+<!-- 
 	<item android:id="@+id/exit"
 		android:title="@string/exit"
 		android:icon="@drawable/android:ic_menu_close_clear_cancel" />
+-->
 </menu>
