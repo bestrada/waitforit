@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class TransitListAdapter extends BaseAdapter
@@ -42,18 +43,18 @@ public class TransitListAdapter extends BaseAdapter
     
     public View getView(int position, View convertView, ViewGroup parent)
     {
-       TextView result = null;
+       LinearLayout result = null;
 
        if (_cursor.getPosition() == position || _cursor.moveToPosition(position))
        {
-          result = null != convertView && convertView instanceof TextView ? 
-                (TextView) convertView :
-                new TextView(_context);
-          
-          String title = _cursor.getString(_cursor.getColumnIndex("title"));
-          result.setText(title);
-       }
+          result = null != convertView && convertView instanceof LinearLayout ?  
+                (LinearLayout) convertView :
+                (LinearLayout) View.inflate(_context, R.layout.list_row, null);
 
+          TextView name = (TextView) result.findViewById(R.id.name);
+          String title = _cursor.getString(_cursor.getColumnIndex("title"));
+          name.setText(title);
+       }
        return result;
     }
 }

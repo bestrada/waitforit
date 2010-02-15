@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<style name="Text">
+		<item name="android:textSize">10pt</item>
+		<item name="android:gravity">center_vertical|left</item>
+		<item name="android:padding">2pt</item>
+	</style>
+	
+	<style name="ListRow" parent="Text">
+		<item name="android:paddingLeft">8pt</item>
+	</style>
+	
+	<style name="ResultText" parent="Text">
+		<item name="android:textColor">#FFFFFF</item>
+		<item name="android:textSize">8pt</item>
+		<item name="android:paddingTop">12pt</item>
+	</style>
+	
+	<style name="ResultTextError" parent="ResultText">
+		<item name="android:textColor">#FF2222</item>
+	</style>
+</resources>

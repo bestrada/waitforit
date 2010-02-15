@@ -9,17 +9,23 @@
       made so far. set the visibility to gone for now, they will appear when 
       the user makes a selection
       -->
-    <TextView android:id="@+id/route_selection"  
-        android:layout_width="fill_parent" 
-        android:layout_height="wrap_content"
+    <TextView android:id="@+id/route_selection"
+    	style="@style/Text"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" 
+        android:paddingLeft="2pt"
         android:visibility="gone" />    
-    <TextView android:id="@+id/direction_selection"  
+    <TextView android:id="@+id/direction_selection"
+    	style="@style/Text"  
         android:layout_width="fill_parent" 
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent" 
+        android:paddingLeft="4pt"
         android:visibility="gone" />    
-    <TextView android:id="@+id/stop_selection"  
-        android:layout_width="fill_parent" 
-        android:layout_height="wrap_content"
+    <TextView android:id="@+id/stop_selection"
+    	style="@style/Text"  
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"  
+        android:paddingLeft="6pt"
         android:visibility="gone" />    
     
     <!-- a list used to store the current selection options -->
@@ -31,28 +37,44 @@
 		android:id="@+id/throbbler"
 		android:orientation="horizontal"
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="fill_parent"
+		android:gravity="center"
 		android:visibility="gone"
 		android:stretchColumns="0">
+
 		<TableRow>
 		    <ProgressBar
 		    	android:layout_width="wrap_content"
-		    	android:layout_height="wrap_content"
+		    	android:layout_height="fill_parent"
+		    	android:paddingTop="12pt"
 		    	android:indeterminate="true"
 		    	android:indeterminateOnly="true"
 		    	android:layout_gravity="center" />
 		</TableRow>
 		<TableRow>
 			<TextView
-		    	android:layout_width="fill_parent"
+		    	android:layout_width="wrap_content"
 		    	android:layout_height="fill_parent"
+		    	android:paddingTop="4pt"
 		    	android:layout_gravity="center"
 		    	android:text="@string/app_name" />
 		</TableRow>
 	</TableLayout>
-	
-	<TextView android:id="@+id/prediction"  
-        android:layout_width="fill_parent" 
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
+
+	<TableLayout
+		android:id="@+id/result"
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:gravity="center"
+		android:stretchColumns="0"
+		android:visibility="gone">
+		<TableRow>
+			<TextView android:id="@+id/prediction"
+				style="@style/ResultText"
+		        android:layout_width="fill_parent" 
+		        android:layout_height="fill_parent"
+		        android:layout_gravity="center" />
+		</TableRow>
+	</TableLayout>
 </LinearLayout>

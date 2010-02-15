@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/routeRow"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+<!-- 
+	<TextView android:id="@+id/watermark"
+		android:layout_weight="7"
+	    android:gravity="center_vertical|right"
+	    android:textSize="10pt"
+	    android:textColor="#FFFFFF"
+	    android:paddingRight="5px"
+	    android:layout_width="fill_parent"
+	    android:layout_height="42px"/>
+-->	
+	<TextView android:id="@+id/name"
+	    style="@style/ListRow"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"/>
+<!-- 
+	<Button android:id="@+id/favorite" 
+		android:focusable="false"
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content" 
+		android:gravity="center_vertical|right" 
+		android:text="fav" />
+-->
+</LinearLayout>
