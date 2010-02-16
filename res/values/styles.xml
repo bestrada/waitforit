@@ -18,11 +18,17 @@
 	<style name="TitleButton" parent="@android:style/Widget.Button">
 		<item name="android:textColor">#EEEEEE</item>
 		<item name="android:gravity">center_vertical|right</item>
-		<item name="android:textSize">10pt</item>
-		<item name="android:padding">6pt</item>
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">fill_parent</item>
+		<item name="android:textSize">11pt</item>
+		<item name="android:paddingTop">3pt</item>
+		<item name="android:paddingRight">6pt</item>
+		<item name="android:paddingLeft">3pt</item>
 		<item name="android:background">@drawable/red_rectangle</item>
 		<item name="android:focusable">true</item>
 		<item name="android:clickable">true</item>
+		<item name="android:ellipsize">end</item>
+		<item name="android:singleLine">true</item>
 	</style>
 	
 	<style name="ResultText" parent="Text">

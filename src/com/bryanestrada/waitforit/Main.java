@@ -113,46 +113,44 @@ public class Main extends ListActivity implements PredictionResultHandler
       
       _throbbler.setVisibility(View.GONE);
       _result.setVisibility(View.GONE);
-      Animation pullLeft = AnimationUtils.loadAnimation(this, R.anim.pull_left);
-      Animation appear = AnimationUtils.loadAnimation(this, R.anim.appear);
+      
+      _listState = -1;
       switch (view.getId())
       {
       case R.id.route_selection:
          _listState = ROUTE;
-         _selectedIds[STOP] = _selectedIds[DIRECTION] = _selectedIds[ROUTE] = -1;
-         _selectedTags[STOP] = _selectedTags[DIRECTION] = _selectedTags[ROUTE] = null;
-         
-         _selectedStack[ROUTE].startAnimation(pullLeft);
-         _selectedStack[DIRECTION].startAnimation(pullLeft);
-         _selectedStack[STOP].startAnimation(pullLeft);
-         _selectedStack[ROUTE].setVisibility(View.GONE);
-         _selectedStack[DIRECTION].setVisibility(View.GONE);
-         _selectedStack[STOP].setVisibility(View.GONE);
          swapListCursor(_db.getAllRoutes());
          break;
       case R.id.direction_selection:
-         _listState = DIRECTION;
-         _selectedIds[STOP] = _selectedIds[DIRECTION] = -1;
-         _selectedTags[STOP] = _selectedTags[DIRECTION] = null;
-         
-         _selectedStack[DIRECTION].startAnimation(pullLeft);
-         _selectedStack[STOP].startAnimation(pullLeft);
-         _selectedStack[DIRECTION].setVisibility(View.GONE);
-         _selectedStack[STOP].setVisibility(View.GONE);
+         _listState= DIRECTION;
          swapListCursor(_db.getDirections(_selectedIds[ROUTE]));
          break;
       case R.id.stop_selection:
          _listState = STOP;
-         _selectedIds[STOP] = -1;
-         _selectedTags[STOP] = null;
-         
-         _selectedStack[STOP].startAnimation(pullLeft);
-         _selectedStack[STOP].setVisibility(View.GONE);
          swapListCursor(_db.getStops(_selectedIds[DIRECTION]));
          break;
       }
-      _selectionList.setVisibility(View.VISIBLE);
-      _selectionList.startAnimation(appear);
+      
+      if (_listState >= 0)
+      {
+         Animation pullLeft = AnimationUtils.loadAnimation(this, R.anim.pull_left);
+         Animation appear = AnimationUtils.loadAnimation(this, R.anim.appear);
+         for (int i = _listState; i <= STOP; i++)
+         {
+            _selectedIds[i] = -1;
+            _selectedTags[i] = null;
+         }
+         
+         for (int i = STOP; i >= _listState; i--)
+         {
+            if (View.VISIBLE == _selectedStack[i].getVisibility())
+               _selectedStack[i].startAnimation(pullLeft);
+            
+            _selectedStack[i].setVisibility(View.GONE);
+         }
+         _selectionList.setVisibility(View.VISIBLE);
+         _selectionList.startAnimation(appear);
+      }
    }
    
    private void setListeners()
@@ -262,7 +260,7 @@ public class Main extends ListActivity implements PredictionResultHandler
          case STOP:
             _selectionList.setVisibility(View.GONE);
             _listState = DONE;
-            showPrediction();
+            showPrediction(appear);
             break;
          }
       }
@@ -292,11 +290,12 @@ public class Main extends ListActivity implements PredictionResultHandler
       return result;
    }
    
-   private void showPrediction()
+   private void showPrediction(Animation animation)
    {
       // first replace the text to indicate wait for it, then spin off a thread 
       // that will change it when it's finally done.
       _throbbler.setVisibility(View.VISIBLE);
+      _throbbler.startAnimation(animation);
       
       // now queue an update for the prediction text
       _guiThread.removeCallbacks(_updateTask);
@@ -333,6 +332,17 @@ public class Main extends ListActivity implements PredictionResultHandler
          public void run()
          {
             view.setVisibility(visibility);
+            if (View.VISIBLE == visibility)
+            {
+               // if this is an "appear" visibility shift, then do a fade-in
+               Animation appear = AnimationUtils.loadAnimation(Main.this, R.anim.appear);
+               view.startAnimation(appear);
+            }
+            else if (View.GONE == visibility || View.INVISIBLE == visibility)
+            {
+               Animation disappear = AnimationUtils.loadAnimation(Main.this, R.anim.disappear);
+               view.startAnimation(disappear);
+            }
          }
       });
    }

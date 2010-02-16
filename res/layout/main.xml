@@ -12,20 +12,14 @@
     <Button android:id="@+id/route_selection"
     	style="@style/TitleButton"
     	android:focusable="true"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" 
         android:visibility="gone" />    
     <Button android:id="@+id/direction_selection"
     	style="@style/TitleButton"  
     	android:focusable="true"
-        android:layout_width="fill_parent" 
-        android:layout_height="fill_parent" 
         android:visibility="gone" />    
     <Button android:id="@+id/stop_selection"
     	style="@style/TitleButton"  
     	android:focusable="true"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"  
         android:visibility="gone" />
         
     <View android:id="@+id/divider"
