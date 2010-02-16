@@ -26,6 +26,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bryanestrada.waitforit.data.DataAccessor;
+import com.flurry.android.FlurryAgent;
 import com.nextbus.webservices.Prediction;
 import com.nextbus.webservices.PredictionResultHandler;
 import com.nextbus.webservices.PredictionTask;
@@ -360,7 +361,6 @@ public class Main extends ListActivity implements PredictionResultHandler
       });
    }
 
-   
    @Override
    public boolean onKeyDown(int keyCode, KeyEvent event)
    {
@@ -374,5 +374,21 @@ public class Main extends ListActivity implements PredictionResultHandler
          }
       }
       return result ? result : super.onKeyDown(keyCode, event);
+   }
+
+   // now the analytics code
+   
+   @Override
+   public void onStart()
+   {
+      super.onStart();
+      FlurryAgent.onStartSession(this, "F3K5J4U43UBN55HPVJC3");
+   }
+   
+   @Override
+   public void onStop()
+   {
+      super.onStop();
+      FlurryAgent.onEndSession(this);
    }
 }
