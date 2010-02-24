@@ -225,6 +225,15 @@ public class Main extends ListActivity implements PredictionResultHandler
       _cursor = c;
       this.startManagingCursor(_cursor);
    }
+   
+   private void swapListCursor(Cursor c, float lat, float lon)
+   {
+	   this.stopManagingCursor(_cursor);
+      setListAdapter(new TransitListAdapter(this, c, lat, lon));
+      _cursor.close();
+      _cursor = c;
+      this.startManagingCursor(_cursor);
+   }
 
    @Override
    protected void onListItemClick(ListView l, View v, int position, long id)
@@ -255,7 +264,7 @@ public class Main extends ListActivity implements PredictionResultHandler
             _selectionList.setVisibility(View.VISIBLE);
             _selectionList.startAnimation(appear);
             //_selectionList.startAnimation(push);
-            swapListCursor(_db.getStops(id));
+            swapListCursor(_db.getStops(id), 0.0f, 0.0f);
             _listState = STOP;
             break;
          case STOP:

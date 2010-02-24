@@ -2,6 +2,7 @@ package com.bryanestrada.waitforit;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -10,13 +11,33 @@ import android.widget.TextView;
 
 public class TransitListAdapter extends BaseAdapter
 {
+	private static final String TAG = "TransitListAdapter";
+	
     private final Context _context;
     private final Cursor _cursor;
     
+    private final boolean _geoLocateEnabled;
+    private final float _latitude;
+    private final float _longitude;
+    
     public TransitListAdapter(Context context, Cursor cursor)
     {
-        _context = context;
+    	this(context, cursor, 0, 0, false);
+    }
+    
+    public TransitListAdapter(Context context, Cursor cursor, float lat, float lon)
+    {
+    	this(context, cursor, lat, lon, true);
+    }
+    
+    private TransitListAdapter(Context context, Cursor cursor, float lat, float lon, boolean enableGeoLocate)
+    {
+    	_context = context;
         _cursor = cursor;
+        
+        _latitude = lat;
+        _longitude = lon;
+        _geoLocateEnabled = enableGeoLocate;
     }
     
     public final int getCount() { return _cursor.getCount(); }
@@ -55,6 +76,34 @@ public class TransitListAdapter extends BaseAdapter
           String title = _cursor.getString(_cursor.getColumnIndex("title"));
           name.setText(title);
        }
+       highlightIfClose(_cursor, result);
        return result;
+    }
+    
+    private void highlightIfClose(Cursor cursor, View view)
+    {
+    	if (_geoLocateEnabled)
+    	{
+	    	// first let's see if we can get the lat/lon of this item
+	    	int latCol = cursor.getColumnIndex("lat");
+	    	int lonCol = cursor.getColumnIndex("lon");
+	    	for (int i = 0; i < cursor.getColumnCount(); i++)
+	    	{
+	    		String name = cursor.getColumnName(i);
+	    		Log.i(TAG, name);
+	    	}
+	    	
+	    	float lat = cursor.getFloat(latCol);
+	    	float lon = cursor.getFloat(lonCol);
+	    	
+	    	float delta = (_latitude - lat) + (_longitude - lon);
+	    	
+	    	// if the delta is within a certain tolerance, then make this view 
+	    	// have a green highlight
+	    	if (delta < Float.MAX_VALUE)
+	    	{
+	    		// view.setBackgroundColor(R.color.green_highlight);
+	    	}
+    	}
     }
 }

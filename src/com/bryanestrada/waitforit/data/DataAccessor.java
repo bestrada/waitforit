@@ -145,7 +145,7 @@ public class DataAccessor extends SQLiteOpenHelper
     
     public final Cursor getStops(long directionId)
     {
-       return _db.query("stops INNER JOIN trips", new String[]{"stops._id","stops.tag","stops.title"}, "trips.direction_id=? AND stops._id=trips.stop_id", new String[] {Long.toString(directionId)}, null, null, null);
+       return _db.query("stops INNER JOIN trips", new String[]{"stops._id","stops.tag","stops.title","stops.lat","stops.lon"}, "trips.direction_id=? AND stops._id=trips.stop_id", new String[] {Long.toString(directionId)}, null, null, null);
     }
     /**
      * SQL query to find all directions that are associated with a given route 
