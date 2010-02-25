@@ -41,6 +41,7 @@ public class Main extends ListActivity implements PredictionResultHandler
    private final Button[] _selectedStack = new Button[3];
    private final long[] _selectedIds = new long[3];
    private final String[] _selectedTags = new String[3];
+   private final int[] _selectedPosition = new int[3];
    
    private static final int ROUTE = 0;
    private static final int DIRECTION = 1;
@@ -149,6 +150,7 @@ public class Main extends ListActivity implements PredictionResultHandler
             
             _selectedStack[i].setVisibility(View.GONE);
          }
+         _selectionList.setSelection(_selectedPosition[_listState]);
          _selectionList.setVisibility(View.VISIBLE);
          _selectionList.startAnimation(appear);
       }
@@ -239,7 +241,8 @@ public class Main extends ListActivity implements PredictionResultHandler
    protected void onListItemClick(ListView l, View v, int position, long id)
    {
       _selectedIds[_listState] = id;
-      _selectedTags[_listState] = (String) this.getListAdapter().getItem(position);
+      _selectedPosition[_listState] = position;
+      _selectedTags[_listState] = (String) l.getItemAtPosition(position);
 
       if (v instanceof LinearLayout)
       {
