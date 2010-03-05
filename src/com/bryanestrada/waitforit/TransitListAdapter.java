@@ -62,6 +62,26 @@ public class TransitListAdapter extends BaseAdapter
         return result;
     }
     
+    public double getLatitude(int position)
+    {
+    	double result = 0;
+    	if (_cursor.getPosition() == position || _cursor.moveToPosition(position))
+    	{
+    		result = _cursor.getDouble(_cursor.getColumnIndex("lat"));
+    	}
+    	return result;
+    }
+    
+    public double getLongitude(int position)
+    {
+    	double result = 0;
+    	if (_cursor.getPosition() == position || _cursor.moveToPosition(position))
+    	{
+    		result = _cursor.getDouble(_cursor.getColumnIndex("lat"));
+    	}
+    	return result;
+    }
+    
     public View getView(int position, View convertView, ViewGroup parent)
     {
        LinearLayout result = null;
