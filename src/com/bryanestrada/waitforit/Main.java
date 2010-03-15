@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bryanestrada.androidutils.AsynchronousGuiHelper;
 import com.bryanestrada.waitforit.data.DataAccessor;
 import com.flurry.android.FlurryAgent;
 import com.nextbus.webservices.Prediction;
@@ -325,54 +326,18 @@ public class Main extends ListActivity implements PredictionResultHandler
          b.append('\n');
       }
       String predict = b.toString();
-      guiSetVisibility(_throbbler, View.GONE);
+      AsynchronousGuiHelper.getInstance().guiSetVisibility(this, _throbbler, View.GONE);
       if (predict.length() > 0)
       {
-         guiSetText(_prediction, predict, R.style.ResultText);
+          AsynchronousGuiHelper.getInstance().guiSetText(this, _prediction, predict, R.style.ResultText);
       }
       else
       {
-         guiSetText(_prediction, getString(R.string.prediction_error), R.style.ResultTextError);
+          AsynchronousGuiHelper.getInstance().guiSetText(this, _prediction, getString(R.string.prediction_error), R.style.ResultTextError);
       }
-      guiSetVisibility(_result, View.VISIBLE);
+      AsynchronousGuiHelper.getInstance().guiSetVisibility(this, _result, View.VISIBLE);
    }
    
-   private void guiSetVisibility(final View view, final int visibility)
-   {
-      _guiThread.post(new Runnable()
-      {
-         @Override
-         public void run()
-         {
-            view.setVisibility(visibility);
-            if (View.VISIBLE == visibility)
-            {
-               // if this is an "appear" visibility shift, then do a fade-in
-               Animation appear = AnimationUtils.loadAnimation(Main.this, R.anim.appear);
-               view.startAnimation(appear);
-            }
-            else if (View.GONE == visibility || View.INVISIBLE == visibility)
-            {
-               Animation disappear = AnimationUtils.loadAnimation(Main.this, R.anim.disappear);
-               view.startAnimation(disappear);
-            }
-         }
-      });
-   }
-   
-   private void guiSetText(final TextView view, final String text, final int style)
-   {
-      _guiThread.post(new Runnable()
-      {
-         @Override
-         public void run()
-         {
-            view.setTextAppearance(Main.this, style);
-            view.setText(text);
-         }
-      });
-   }
-
    @Override
    public boolean onKeyDown(int keyCode, KeyEvent event)
    {
