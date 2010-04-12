@@ -14,18 +14,21 @@ public final class AsynchronousGuiHelper
     private static AsynchronousGuiHelper Instance = null;
     public static final AsynchronousGuiHelper getInstance()
     {
-        if (null == Instance)
-            Instance = new AsynchronousGuiHelper();
-        
         return Instance;
     }
-    
+    public static final void initialize(Handler guiThread)
+    {
+    	// you only need to do this if it hasn't already been initialized
+    	if (null == Instance)
+    		Instance = new AsynchronousGuiHelper(guiThread);
+    }
+ 
     
     private Handler _guiThread;
     
-    private AsynchronousGuiHelper()
+    private AsynchronousGuiHelper(Handler guiThread)
     {
-        _guiThread = new Handler();
+        _guiThread = guiThread;
     }
     
     

@@ -82,7 +82,8 @@ public class Main extends ListActivity implements PredictionResultHandler
          return;
       }
       _db.open();
-
+      // this class must be initialized by the UI thread
+      AsynchronousGuiHelper.initialize(new Handler());
       super.onCreate(savedInstanceState);
       this.setContentView(R.layout.main);
       
