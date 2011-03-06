@@ -36,7 +36,6 @@ public final class AsynchronousGuiHelper
     {
        _guiThread.post(new Runnable()
        {
-          @Override
           public void run()
           {
              view.setVisibility(visibility);
@@ -59,7 +58,6 @@ public final class AsynchronousGuiHelper
     {
        _guiThread.post(new Runnable()
        {
-          @Override
           public void run()
           {
              view.setTextAppearance(context, style);

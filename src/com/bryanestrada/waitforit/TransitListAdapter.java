@@ -32,7 +32,7 @@ public class TransitListAdapter extends BaseAdapter
     
     private TransitListAdapter(Context context, Cursor cursor, float lat, float lon, boolean enableGeoLocate)
     {
-    	_context = context;
+    	  _context = context;
         _cursor = cursor;
         
         _latitude = lat;

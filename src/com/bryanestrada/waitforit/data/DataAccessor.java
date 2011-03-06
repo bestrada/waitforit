@@ -135,7 +135,7 @@ public class DataAccessor extends SQLiteOpenHelper
      */
     public final Cursor getAllRoutes()
     {
-        return _db.query("routes", new String[] {"_id","tag","title"}, null, null, null, null, null);
+        return _db.query("routes", new String[] {"_id","tag","title", "color", "oppositecolor"}, null, null, null, null, null);
     }
     
     public final Cursor getDirections(long routeId)

@@ -1,6 +1,6 @@
 package com.nextbus.webservices;
 
-public class Prediction
+public class Prediction implements Comparable<Prediction>
 {
    private final int _secondsFromNow;
    private final String _direction;
@@ -34,4 +34,11 @@ public class Prediction
       }
       return result;
    }
+
+   public int compareTo(Prediction another)
+   {
+      return this._secondsFromNow - another._secondsFromNow;
+   }
+
+
 }

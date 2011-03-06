@@ -27,28 +27,24 @@ class TransitLocationListener implements LocationListener
 	}
 	
 
-	@Override
 	public void onLocationChanged(Location position)
 	{
-		for (int i = 0; i < _stops.getCount(); i++)
+		/*for (int i = 0; i < _stops.getCount(); i++)
 		{
 			
-		}
+		}*/
 	}
 
-	@Override
 	public void onProviderDisabled(String provider)
 	{
 		
 	}
 
-	@Override
 	public void onProviderEnabled(String provider)
 	{
 		
 	}
 
-	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras)
 	{
 		

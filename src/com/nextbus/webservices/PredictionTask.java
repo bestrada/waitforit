@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -46,7 +47,6 @@ public class PredictionTask implements Runnable
       _handler = handler;
    }
 
-   @Override
    public void run()
    {
       Iterable<Prediction> predictions = getPrediction(_routeTag, _stopTag);
@@ -65,49 +65,39 @@ public class PredictionTask implements Runnable
       query.add(new BasicNameValuePair("s", stopTag));
       try
       {
-         DocumentBuilder db = dbf.newDocumentBuilder();
          URI uri = URIUtils.createURI("http", "webservices.nextbus.com", -1, "/service/publicXMLFeed", URLEncodedUtils.format(query, "UTF-8"), null);
-         HttpGet get = new HttpGet(uri);
-         HttpResponse response = httpClient.execute(get);
-         HttpEntity entity =  response.getEntity();
-         InputStream in = entity.getContent();
-         doc = db.parse(in);
+         InputStream in = httpClient.execute(new HttpGet(uri)).getEntity().getContent();
+         doc = dbf.newDocumentBuilder().parse(in);
       }
-      catch (ParserConfigurationException e)
-      {
-         Log.e(TAG, e.getMessage(), e);
-         doc = null;
-      }
-      catch (SAXException e)
-      {
-         Log.e(TAG, e.getMessage(), e);
-         doc = null;
-      }
-      catch (IOException e)
-      {
-         Log.e(TAG, e.getMessage(), e);
-         doc = null;
-      } 
-      catch (URISyntaxException e)
-      {
-         Log.e(TAG, e.getMessage(), e);
-         doc = null;
-      }
+      catch (ParserConfigurationException e) { Log.e(TAG, e.getMessage(), e); doc = null; }
+      catch (SAXException e) { Log.e(TAG, e.getMessage(), e); doc = null; }
+      catch (IOException e) { Log.e(TAG, e.getMessage(), e); doc = null; } 
+      catch (URISyntaxException e) { Log.e(TAG, e.getMessage(), e); doc = null; }
       
       if (null != doc)
       {
-         NodeList predictions = doc.getElementsByTagName("prediction");
-         result = new ArrayList<Prediction>(predictions.getLength());
-         for (int i = 0; i < predictions.getLength(); i++)
+         result = new ArrayList<Prediction>();
+         NodeList directions = doc.getElementsByTagName("direction");
+         for (int i = 0; i < directions.getLength(); i++)
          {
-            Node node = predictions.item(i);
-            if (Node.ELEMENT_NODE == node.getNodeType())
+            Node dnode = directions.item(i);
+            if (Node.ELEMENT_NODE == dnode.getNodeType())
             {
-               Element prediction = (Element) node;
-               String seconds = prediction.getAttribute("seconds");
-               result.add(new Prediction(Integer.parseInt(seconds), null));
+               String direction = ((Element) dnode).getAttribute("title");
+               NodeList predictions = dnode.getChildNodes();
+               for (int j = 0; j < predictions.getLength(); j++)
+               {
+                  Node pnode = predictions.item(j);
+                  if (Node.ELEMENT_NODE == pnode.getNodeType())
+                  {
+                     Element prediction = (Element) pnode;
+                     String seconds = prediction.getAttribute("seconds");
+                     result.add(new Prediction(Integer.parseInt(seconds), direction));
+                  }
+               }
             }
          }
+         Collections.sort(result);
       }
       return result;
    }

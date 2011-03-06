@@ -162,7 +162,6 @@ public class Main extends ListActivity implements PredictionResultHandler
    {
       OnClickListener stackViewListener = new OnClickListener()
       {
-         @Override
          public void onClick(View view)
          {
             Main.this.onClickStack(view);
@@ -184,7 +183,6 @@ public class Main extends ListActivity implements PredictionResultHandler
       
       _updateTask = new Runnable()
       {
-         @Override
          public void run()
          {
             String routeTag = _selectedTags[ROUTE];
@@ -259,6 +257,7 @@ public class Main extends ListActivity implements PredictionResultHandler
          switch (_listState)
          {
          case ROUTE:
+            this.setColors(_cursor.getString(3), _cursor.getString(4));
             _selectionList.setVisibility(View.VISIBLE);
             _selectionList.startAnimation(appear);
             //_selectionList.startAnimation(push);
@@ -278,6 +277,16 @@ public class Main extends ListActivity implements PredictionResultHandler
             showPrediction(appear);
             break;
          }
+      }
+   }
+   
+   private void setColors(String background, String color)
+   {
+      int c = Integer.parseInt(color);
+      int b = Integer.parseInt(background);
+      for (Button button : _selectedStack) {
+         button.setBackgroundColor(0xFF000000 | b);
+         button.setTextColor(0xFF000000 | c);
       }
    }
    
@@ -317,7 +326,6 @@ public class Main extends ListActivity implements PredictionResultHandler
       _guiThread.postDelayed(_updateTask, 200);
    }
 
-   @Override
    public void setPredictionResult(Iterable<Prediction> result)
    {
       StringBuilder b = new StringBuilder();
